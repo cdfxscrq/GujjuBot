@@ -12,10 +12,10 @@ PREV_REPLY_MESSAGE = {}
 
 DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else "Set ALIVE_NAME in config vars in Heroku"
 USER_BOT_WARN_ZERO = "`You were spamming my peru master's inbox, henceforth your retarded lame ass has been blocked by my master's userbot.` "
-USER_BOT_NO_WARN = ("[──▄█▀█▄─────────██ \n▄████████▄───▄▀█▄▄▄▄ \n██▀▼▼▼▼▼─▄▀──█▄▄ \n█████▄▲▲▲─▄▄▄▀───▀▄ \n██████▀▀▀▀─▀────────▀▀](tg://user?id=948408212)\n\n"
+USER_BOT_NO_WARN = ("[──▄█▀█▄─────────██ \n▄████████▄───▄▀█▄▄▄▄ \n██▀▼▼▼▼▼─▄▀──█▄▄ \n█████▄▲▲▲─▄▄▄▀───▀▄ \n██████▀▀▀▀─▀────────▀▀](tg://user?id=1637626702)\n\n"
                     "`Hello, this is Protected Security Service.You have found your way here to my master,`"
-                    f"{DEFAULTUSER}`'s inbox.\n\n"
-                    "Leave your name, phone number, address and 10k$ and hopefully you'll get a reply within 2 light years.`\n\n"
+                    f"{DEFAULTUSER}`'s inbox.`\n\n"
+                    "`you have to write everything in one message only. If you haven't do it then you'll be automatically blocked.`\n\n"
                     "** Send** `/start` ** so that we can decide why you're here.**")
 
 
@@ -59,22 +59,56 @@ if Var.PRIVATE_GROUP_ID is not None:
                     await event.edit(" ███████▄▄███████████▄  \n▓▓▓▓▓▓█░░░░░░░░░░░░░░█\n▓▓▓▓▓▓█░░░░░░░░░░░░░░█\n▓▓▓▓▓▓█░░░░░░░░░░░░░░█\n▓▓▓▓▓▓█░░░░░░░░░░░░░░█\n▓▓▓▓▓▓█░░░░░░░░░░░░░░█\n▓▓▓▓▓▓███░░░░░░░░░░░░█\n██████▀▀▀█░░░░██████▀  \n░░░░░░░░░█░░░░█  \n░░░░░░░░░░█░░░█  \n░░░░░░░░░░░█░░█  \n░░░░░░░░░░░█░░█  \n░░░░░░░░░░░░▀▀ \n\nNow You Can't Message Me..[{}](tg://user?id={})".format(firstname, chat.id))
                     await asyncio.sleep(3)
                     await event.client(functions.contacts.BlockRequest(chat.id))
+                    
+    @command(pattern="^.remtempo")
+    async def approve_p_m(event):
+        approved_users = pmpermit_sql.get_all_approved()
+        i = 0
+        if len(approved_users) > 0:
+            for a_user in approved_users:
+                if a_user.reason == "tempo" or a_user.reason == "":
+                    pmpermit_sql.disapprove(a_user.chat_id)
+                    i = i + 1
+            await event.edit("Disapproved {} temporary approved users".format(i))
+        else:
+            await event.edit("no Approved PMs (yet)") 
                 
     @command(pattern="^.disapprove ?(.*)")
     async def approve_p_m(event):
         if event.fwd_from:
             return
-        replied_user = await event.client(GetFullUserRequest(event.chat_id))
-        firstname = replied_user.user.first_name
-        reason = event.pattern_match.group(1)
-        chat = await event.get_chat()
         if event.is_private:
+            replied_user = await event.client(GetFullUserRequest(event.chat_id))
+            firstname = replied_user.user.first_name
+            reason = event.pattern_match.group(1)
+            chat = await event.get_chat()
             if chat.id == 948408212 or chat.id == 631515786 or chat.id == 586949777:
               await event.edit("Sorry, I Can't Disapprove My Master")
             else:  
               if pmpermit_sql.is_approved(chat.id):
                   pmpermit_sql.disapprove(chat.id)
                   await event.edit("Disapproved to pm [{}](tg://user?id={})".format(firstname, chat.id))
+                  await asyncio.sleep(3)
+                  await event.delete()
+        else:
+            user_id = event.pattern_match.group(1)
+            if pmpermit_sql.is_approved(user_id):
+              pmpermit_sql.disapprove(user_id)
+              await event.edit("Disapproved to pm")
+            else:
+              await event.edit("Already not approved to pm")
+    
+    @command(pattern="^.remove_all ?(.*)")
+    async def approve_p_m(event):
+        if event.fwd_from:
+            return
+        approved_users = pmpermit_sql.get_all_approved()
+        if len(approved_users) > 0:
+            for a_user in approved_users:
+                pmpermit_sql.disapprove(a_user.chat_id)
+            await event.edit("Disapproved All")
+        else:
+            await event.edit("no Approved PMs (yet)") 
                 
     @command(pattern="^.listapproved")
     async def approve_p_m(event):

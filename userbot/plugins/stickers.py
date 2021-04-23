@@ -52,9 +52,9 @@ async def _(event):
     userid = event.from_id
     #packname = f"JayukeStickers"
     #packshortname = f"GujjuBot_{userid}_ns"  # format: Uni_Borg_userid
-    if userid == 948408212:
-        packname = f"JayukeStickers"
-        packshortname = "Jayu_ke_locker_me"
+    if userid == 1669269071:
+        packname = f"JayuKeStickers"
+        packshortname = "Jayu_ka_pack"
     elif userid ==631515786:
         packname = f"@vireso's fav pack"
         packshortname = "vireso_s_pack"
@@ -70,10 +70,11 @@ async def _(event):
     if is_a_s:
         file_ext_ns_ion = "AnimatedSticker.tgs"
         uploaded_sticker = await borg.upload_file(file, file_name=file_ext_ns_ion)
-        packname = f"{userid}'s @AnimatedStickersGroup"
-        if userid == 948408212:
-            packshortname = "Jayu_Animated"
+        if userid == 1669269071:
+            packname = f"Jayubhai Ke Animated"
+            packshortname = "Jayu_ke_Animated"
         else:
+            packname = f"{userid}'s @AnimatedStickersGroup"
             packshortname = f"GujjuBot_{userid}_an" # format: Uni_Borg_userid
     elif not is_message_image(reply_message):
         await event.edit("Invalid message type")
@@ -134,8 +135,12 @@ async def _(event):
                 while response.text == FILLED_UP_DADDY:
                     pack += 1
                     prevv = int(pack) - 1
-                    packname = f"{user.first_name}'s GujjuBot Vol.{pack}"
-                    packshortname = f"Vol_{pack}_with_{user.first_name}"
+                    if userid == 1669269071:
+                        packname = f"Jayu's Vol.{pack}"
+                        packshortname = f"Jayu_ka_pack_no_{pack}"
+                    else:
+                        packname = f"{user.first_name}'s GujjuBot Vol.{pack}"
+                        packshortname = f"Vol_{pack}_with_{user.first_name}"
                     #if userid == 948408212:
                        # packname = f"{user.first_name}'s GujjuBot Vol.{pack}"
                        # packshortname = "Vol._{pack}_Jayu_ke_locker_me"
